@@ -15,7 +15,7 @@ if nargin<3, opts.profile = 'accuracy'; end
 % check if alpha regularization parameter is passed in as an option
 % if not, use the default tuned alpha based on sigma
 % do this before calling "setBM3Dopts" since it will erase the input alpha
-[m,n] = size(I);
+[m,n,nF] = size(I);
 if numel(sigma)==1
     sigma = ones(m,n)*sigma^2; 
 end
@@ -36,7 +36,7 @@ opts = checkBM3Dopts(opts);
 
 % initialize several variables
 FI = fft2(I);
-hhat2 = abs(hhat).^2;
+hhat2 = sum(abs(hhat).^2,3);
 M = ceil(m/opts.blockSize)*opts.blockSize;
 N = ceil(n/opts.blockSize)*opts.blockSize;
 V = my_Fourier_filters(1,1,m,n,1);
@@ -49,8 +49,9 @@ V = my_Fourier_filters(1,1,m,n,1);
 % parm.theta = sigma^2*50;parm.order = 1;
 % [~,out.ME] = HOTVL2_deblurMF(ifft2(hhat),I,parm);
 % alphaRI = out.ME.thetas(end)/2;
-filtRI = conj(hhat)./(hhat2 + alphaRI.*V);
-out.recWie = real(ifft2(filtRI.*FI));
+MSPD = 1./(hhat2 + alphaRI.*V);
+filtRI = sum(conj(hhat),3).*MSPD;
+out.recWie = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
 sigmaPSD = sigma.*abs(filtRI).^2;
 tau = getColoredTau(opts.levels,sigmaPSD);
 
@@ -88,8 +89,9 @@ end
 %   SECOND WIENER DECON. FILTER ESTIMATE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Wiener_Pilot = abs(fft2(U1(1:m,1:n))).^2;
-filtRWI = conj(hhat).*Wiener_Pilot./(Wiener_Pilot.*hhat2 + alphaRWI);
-out.recWie2 = real(ifft2(FI.*filtRWI));
+MSPD = 1./(hhat2 + alphaRWI./Wiener_Pilot);
+filtRWI = sum(conj(hhat),3).*MSPD;
+out.recWie2 = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
 sigmaPSD = sigma.*abs(filtRWI).^2;
 sigmaWie = getColoredWie(sigmaPSD,opts.blockSizeWie);
 
