@@ -36,6 +36,7 @@ opts = checkBM3Dopts(opts);
 
 % initialize several variables
 FI = fft2(I);
+I0 = I;
 hhat2 = sum(abs(hhat).^2,3);
 M = ceil(m/opts.blockSize)*opts.blockSize;
 N = ceil(n/opts.blockSize)*opts.blockSize;
@@ -51,7 +52,8 @@ V = my_Fourier_filters(1,1,m,n,1);
 % alphaRI = out.ME.thetas(end)/2;
 MSPD = 1./(hhat2 + alphaRI.*V);
 filtRI = sum(conj(hhat),3).*MSPD;
-out.recWie = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
+% out.recWie = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
+out.recWie = WienerFiltNN(I0,hhat,1,alphaRI.*V,500);
 sigmaPSD = sigma.*abs(filtRI).^2;
 tau = getColoredTau(opts.levels,sigmaPSD);
 
@@ -91,7 +93,8 @@ end
 Wiener_Pilot = abs(fft2(U1(1:m,1:n))).^2;
 MSPD = 1./(hhat2 + alphaRWI./Wiener_Pilot);
 filtRWI = sum(conj(hhat),3).*MSPD;
-out.recWie2 = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
+% out.recWie2 = real(ifft2(MSPD.*sum(conj(hhat).*FI,3)));
+out.recWie2 = WienerFiltNN(I0,hhat,1,alphaRWI./Wiener_Pilot,500);
 sigmaPSD = sigma.*abs(filtRWI).^2;
 sigmaWie = getColoredWie(sigmaPSD,opts.blockSizeWie);
 

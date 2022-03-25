@@ -9,7 +9,7 @@ alpha = 1.5;
 rng(2021);
 
 % get image and add noise
-path = 'C:\Users\toby.sanders\Dropbox\archives\data\testImages\';
+path = 'C:\Users\Toby Sanders\Dropbox\archives\data\testImages\';
 % get image and add noise
 % I = imresize(im2double(rgb2gray(imread('peppers.png'))),[d,d]);
 % I = im2double(imread('cameraman.tif'));
@@ -31,15 +31,15 @@ I = im2double((imread([path,'barbara.png'])));
 sigma = 2/255;
 
 U1 = LTsharpen(I,alpha,sigma);
-U2 = LTsharpen2(I,alpha,sigma);
+% U2 = LTsharpen2(I,alpha,sigma);
 
 
 %%
 
-myrel(U1,U2)
+% myrel(U1,U2)
 figure(567);colormap(gray);tiledlayout(2,2,'tilespacing','none');
 % t0 = nexttile;imagesc(b,[0 1]);title('blurry data');
 t1 = nexttile;imagesc(I,[0 1]);title('original');
 t2 = nexttile;imagesc(U1,[0 1]);title('sharpened 1');
-t3 = nexttile;imagesc(U2,[0 1]);title('sharpened 2');
+% t3 = nexttile;imagesc(U2,[0 1]);title('sharpened 2');
 linkaxes([t1 t2 t3]);
