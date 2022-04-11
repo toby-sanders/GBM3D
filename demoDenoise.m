@@ -10,7 +10,8 @@ SNR = 5; % SNR of noisy image (will add noise)
 rng(2021);
 
 % get image and add noise
-I0 = im2double(rgb2gray(imread('fabio.jpeg')));
+% I0 = im2double(rgb2gray(imread('fabio.jpeg')));
+I0 = im2double(imread('cameraman.tif'));
 sigma = mean(I0(:))/SNR;
 I = I0 + randn(size(I0))*sigma;
 % add_Wnoise(I0,SNR);
@@ -19,12 +20,12 @@ I = I0 + randn(size(I0))*sigma;
 tic;
 % default profile options, can also set to 'fast', 'superFast', or 'accuracy'
 opts.profile = 'default'; 
-[U] = GBM3D_distributed(I,sigma,opts);
+[U] = GBM3D(I,sigma,opts);
 toc;
 
 tic; % compare with very fast variation
 opts.profile = 'superFast';
-U2 = GBM3D_distributed(I,sigma,opts);
+U2 = GBM3D(I,sigma,opts);
 toc;
 
 

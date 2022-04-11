@@ -47,7 +47,7 @@ end
 % loop of "match spins" where the algorithm is re-evaluated after circle
 % shifting the image, so that brand new set of reference blocks are used 
 matchSpins = opts.matchSpins;
-parfor ii = 1:numel(matchSpins)
+for ii = 1:numel(matchSpins)
     [S,Volume] = matchBlocksCPU(circshift(I,[matchSpins(ii),matchSpins(ii)]),sigma,opts);
     [U1(:,:,ii),W(:,:,ii)] = denoiseAndAggregateGPU(Volume,S,tau,Psi,Psi2,opts);
     U1(:,:,ii) = circshift(U1(:,:,ii),[-matchSpins(ii),-matchSpins(ii)]);
@@ -68,7 +68,7 @@ end
 %      SECOND ESTIMATE: empirical Wiener filter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 matchSpins = opts.matchSpinsWie;
-parfor ii = 1:numel(matchSpins)
+for ii = 1:numel(matchSpins)
     [S,V1,V2] = matchBlocksWie(...
         circshift(U1,[matchSpins(ii),matchSpins(ii)]),...
         circshift(I,[matchSpins(ii),matchSpins(ii)]),...

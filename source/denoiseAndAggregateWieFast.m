@@ -13,7 +13,7 @@ function [U,W] = denoiseAndAggregateWie(V1,V2,S,sigma,opts)
 % opts - structure with options
 
 % output: U - denoised image
-useGPU = 0;
+useGPU = 10;
 
 % build the volume to denoise based on matched blocks
 [M,N] = size(S); % number of reference blocks
