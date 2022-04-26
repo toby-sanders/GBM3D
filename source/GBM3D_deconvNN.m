@@ -10,7 +10,7 @@ function [U,out] = GBM3D_deconvMF(I,hhat,sigma,opts)
 % Date: 5-9-21
 
 % check if BM3D options were passed in
-if nargin<3, opts.profile = 'accuracy'; end
+if nargin<4, opts.profile = 'accuracy'; end
 
 % check if alpha regularization parameter is passed in as an option
 % if not, use the default tuned alpha based on sigma
