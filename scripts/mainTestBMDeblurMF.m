@@ -1,10 +1,12 @@
 clear;
 d = 256; % image dim.
 sZ = 32; % size of blocks
-SNR = 10; % SNR of noisy image
+SNR = 3; % SNR of noisy image
 opts.profile = 'default';
-omega = 1.5;
+omega = 2.5;
 lambda = 50;
+nF = 10;
+
 rng(2021);
 
 % get image and add noise
@@ -28,7 +30,13 @@ I = im2double(rgb2gray(imread([path,'lena.png'])));
 [d1,d2] = size(I);
 [h,hhat] = makeGausPSF([d1,d2],omega);
 b = ifft2(fft2(I).*hhat);
-[b,sigma] = add_Wnoise(b,SNR);
+
+bSeq = zeros(d1,d2,nF);
+hAll = bSeq;
+for i = 1:nF
+    [bSeq(:,:,i),sigma] = add_Wnoise(b,SNR);
+    hAll(:,:,i) = hhat;
+end
 
 % V = my_Fourier_filters(1,1,d1,d2,1);
 % filt = conj(hhat)./(conj(hhat).*hhat + sigma^2*lambda*V);
@@ -39,8 +47,8 @@ dopts.levels = 1;
 dopts.lambda = lambda;
 dopts.C = 6;
 % [U1,out] = LTBM3D_deconv(b,hhat,sigma,dopts);
-[U2,out2] = GBM3D_deconvMF(b,hhat,sigma,opts);
-U3 = BM3DDEB(b,sigma,fftshift(h));
+[U2,out2] = GBM3D_deconvMF(bSeq(:,:,1),hhat,sigma,opts);
+[U3,out3] = GBM3D_deconvMF(bSeq,hAll,sigma,opts);
 
 
 %%
@@ -57,9 +65,9 @@ t0 = nexttile;imagesc(b,[0 1]);title('blurry data');
 t1 = nexttile;imagesc(out2.recWie,[0 1]);title('1st wiener filter soln');
 t17 = nexttile;imagesc(out2.recWie2,[0 1]);title('2nd wiener solution');
 % t2 = nexttile;imagesc(U1,[0 1]);title(sprintf('my 1 step BM3d: PSNR = %g',psnr1));
-t9 = nexttile;imagesc(U2,[0 1]);title(sprintf('my 2 step GBM3D: PSNR = %g',psnr2));
+t9 = nexttile;imagesc(U2,[0 1]);title(sprintf('single frame deconv: PSNR = %g',psnr2));
 % t5 = nexttile;imagesc(fftshift(out.sigmaPSD));colorbar;title('first PSD');
-t4 = nexttile;imagesc(U3,[0 1]);title(sprintf('original BM3DDEB: PSNR = %g',psnr3));
+t4 = nexttile;imagesc(U3,[0 1]);title(sprintf('multi frame deconv: PSNR = %g',psnr3));
 t6 = nexttile;imagesc(I,[0 1]);title('original');
 t65 = nexttile;imagesc(out2.U1,[0 1]);title(sprintf('1st soln: PSNR = %g',myPSNR(I,out2.U1,1)));
 % t7 = nexttile;imagesc(out.U0,[0 1]);title('initial soln');

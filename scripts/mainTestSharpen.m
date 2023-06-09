@@ -9,7 +9,7 @@ alpha = 1.5;
 rng(2021);
 
 % get image and add noise
-path = 'C:\Users\Toby Sanders\Dropbox\archives\data\testImages\';
+path = 'C:\Users\toby.sanders\Dropbox (Personal)\archives\data\testImages\';
 % get image and add noise
 % I = imresize(im2double(rgb2gray(imread('peppers.png'))),[d,d]);
 % I = im2double(imread('cameraman.tif'));
